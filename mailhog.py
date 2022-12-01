@@ -3,23 +3,25 @@ import re
 import requests
 import ast
 
-params = {
-    'limit': '50',
-}
+def post_v2_messages():
+    params = {
+        'limit': '50',
+    }
 
-response = requests.get(
-    url='http://localhost:5025/api/v2/messages',
-    params=params,
-)
-activation_token = response.json()['items'][0]['Content']['Body']
+    response = requests.get(
+        url='http://localhost:5025/api/v2/messages',
+        params=params,
+    )
+    json_string = response.json()['items'][0]['Content']['Body']
+    activation_token = json_string.split('/')[-1][:-2]
 
-print(ast.literal_eval(activation_token)['ConfirmationLinkUrl'].split('/')[-1])
+    # print(ast.literal_eval(json_string)['ConfirmationLinkUrl'].split('/')[-1])
+    # print(activation_token)
+    # result = (re.search('activate/.*\"', json_string).group(0))
+    # print(result[9:-1])
+    return activation_token
 
-# print(activation_token)
-print(activation_token.split('/')[-1][:-2])
-result = (re.search('activate/.*\"', activation_token).group(0))
-print(result[9:-1])
-
+print(post_v2_messages())
 
 # int_ = 1
 # float_ = 1.1
