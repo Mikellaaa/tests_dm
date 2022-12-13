@@ -1,4 +1,5 @@
 import requests
+from utilities.rest_client import RestClient
 
 registration_model = {
     'login': 'login',
@@ -30,6 +31,7 @@ class AccountApi:
         self.host = host
         self.session = requests.session()
         self.session.headers = headers
+        self.client = RestClient(host=host, headers=headers)
 
     def post_v1_account(self, registration_model: dict, **kwargs: dict) -> requests.Response:
         """
@@ -37,8 +39,8 @@ class AccountApi:
         :param registration_model:
         :return:
         """
-        response = self.session.post(
-            url=f'{self.host}/v1/account',
+        response = self.client.post(
+            path='/v1/account',
             json=registration_model,
             **kwargs,
         )
@@ -50,8 +52,8 @@ class AccountApi:
         :return:
         """
         print(kwargs)
-        response = self.session.get(
-            url=f'{self.host}/v1/account',
+        response = self.client.get(
+            path='/v1/account',
             **kwargs,
         )
         return response
@@ -62,8 +64,8 @@ class AccountApi:
         :param token: Activation token
         :return:
         """
-        response = self.session.put(
-            url=f'{self.host}/v1/account/{token}',
+        response = self.client.put(
+            path=f'/v1/account/{token}',
             **kwargs,
         )
         return response
@@ -74,8 +76,8 @@ class AccountApi:
         :param reset_password_model:
         :return:
         """
-        response = self.session.post(
-            url=f'{self.host}/v1/account/password',
+        response = self.client.post(
+            path='/v1/account/password',
             json=reset_password_model,
             **kwargs,
         )
@@ -87,9 +89,9 @@ class AccountApi:
         :param change_password_model:
         :return:
         """
-        response = self.session.put(
-            url=f'{self.host}/v1/account/password',
-            json=change_password_model
+        response = self.client.put(
+            path='/v1/account/password',
+            json=change_password_model,
             **kwargs,
         )
         return response
@@ -100,8 +102,8 @@ class AccountApi:
         :param change_email:
         :return:
         """
-        response = self.session.put(
-            url=f'{self.host}/v1/account/email',
+        response = self.client.put(
+            path='/v1/account/email',
             json=change_email,
             **kwargs,
         )

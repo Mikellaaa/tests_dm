@@ -1,22 +1,24 @@
 import requests
+from utilities.rest_client import RestClient
 
 
 class MailHogApi:
-    def __init__(self, host: str = 'http://localhost:5025'):
+    def __init__(self, host: str = 'http://localhost:5025', headers: dict = None):
         self.host = host
         self.session = requests.session()
+        self.client = RestClient(host=host, headers=headers)
 
-    def get_last_token_v2_messages(self):
+    def get_token_from_last_email(self) -> str:
         """
-        Get last token
+        Get token from last email
         :return:
         """
         params = {
             'limit': '1',
         }
 
-        response = requests.get(
-            url=f'{self.host}api/v2/messages',
+        response = self.client.get(
+            path='/api/v2/messages',
             params=params,
         )
         json_string = response.json()['items'][0]['Content']['Body']
@@ -24,28 +26,29 @@ class MailHogApi:
 
         return activation_token
 
-    def delete_v2_messages(self):
+    def delete_v2_messages(self, **kwargs) -> requests.Response:
         """
         Delete all messages
         :return:
         """
-        response = requests.delete(
-            url=f'{self.host}/api/v1/messages'
+        response = self.client.delete(
+            path='/api/v1/messages',
+            **kwargs
         )
         return response
 
-    def get_v2_messages(self):
+    def get_v2_messages(self, limit: str) -> requests.Response:
         """
         Get messages
         :return:
         """
         params = {
-            'limit': '50',
+            'limit': limit,
         }
 
-        response = requests.get(
-            url=f'{self.host}/api/v2/messages',
+        response = self.client.get(
+            path='/api/v2/messages',
             params=params,
         )
-        items = response.json()['items']
-        return items
+        # items = response.json()['items']
+        return response
