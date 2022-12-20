@@ -36,10 +36,9 @@ def logger(function):
 class LoginApi:
     def __init__(self, host: str = 'http://localhost:5051', headers: dict = None):
         self.host = host
-        self.session = requests.session()
-        self.session.headers = headers
         self.client = RestClient(host=host, headers=headers)
-
+    def set_headers(self, headers):
+        self.client.session.headers = headers
     @logger
     def post_v1_account_login(self, login_credentials: dict, **kwargs: dict) -> requests.Response:
         """

@@ -1,6 +1,9 @@
+import json
+import time
 import requests
-from utilities.rest_client import RestClient
 
+from utilities.rest_client import RestClient
+from hamcrest import assert_that, has_entries, has_key
 
 class MailHogApi:
     def __init__(self, host: str = 'http://localhost:5025', headers: dict = None):
@@ -37,7 +40,7 @@ class MailHogApi:
         )
         return response
 
-    def get_v2_messages(self, limit: str) -> requests.Response:
+    def get_v2_messages(self, limit: str) -> list:
         """
         Get messages
         :return:
@@ -50,5 +53,35 @@ class MailHogApi:
             path='/api/v2/messages',
             params=params,
         )
-        # items = response.json()['items']
-        return response
+        messages = []
+        items = response.json()['items']
+        for item in items:
+            json_string = item['Content']['Body']
+            value = json.loads(json_string)
+            messages.append(value)
+        return messages
+
+    def get_token(self, type: str, login) -> requests.Response:
+        """
+        Get token
+        :param type:
+        :param login:
+        :return:
+        """
+        messages = self.get_v2_messages('5')
+        for message in messages:
+            if login == message['Login']:
+                if type == 'confirmation' and message.get('ConfirmationLinkUrl'):
+                    return message['ConfirmationLinkUrl'].split('/')[-1][:-2]
+                if type == 'reset' and message.get['ConfirmationLinkUri']:
+                    return message['ConfirmationLinkUri'].split('/')[-1][:-2]
+        time.sleep(2)
+        return self.get_token(type, login)
+
+
+
+login = 'login12222222222'
+mail = MailHogApi(host='http://localhost:5025')
+activation_token = mail.get_token(login=login, type='confirmation')
+print(33333333333333333333, activation_token)
+

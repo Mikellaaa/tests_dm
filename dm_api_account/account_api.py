@@ -74,6 +74,7 @@ class AccountApi:
         """
         Reset registered user password
         :param reset_password_model:
+        :param headers: {'X-Dm-Auth-Token': auth token}
         :return:
         """
         response = self.client.post(

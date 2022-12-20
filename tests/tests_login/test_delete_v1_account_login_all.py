@@ -10,17 +10,6 @@ structlog.configure(
 
 class TestsDeleteV1AccountLogin:
 
-    def test_delete_v1_account_login(self):
-        login = LoginApi(host='http://localhost:5051')
-        login_credentials = {
-            'login': 'new_user3',
-            'password': 'new_user3',
-            'rememberMe': True,
-        }
-        auth_token = login.post_v1_account_login(login_credentials=login_credentials).headers['X-Dm-Auth-Token']
-
-        headers = {
-            'X-Dm-Auth-Token': auth_token
-        }
-        response = login.delete_v1_account_login(headers=headers)
+    def test_delete_v1_account_login(self, login_user):
+        response = login_user.delete_v1_account_login()
         assert response.status_code == 204, f"Статус код ответа должен быть 200, но он равен {response.status_code}"
